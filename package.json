@@ -1,0 +1,24 @@
+{
+  "name": "shoot",
+  "version": "0.0.0",
+  "description": "The stems and front ends of bluum Edit",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node_modules/gulp/bin/gulp.js build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bluum-life/shoot.git"
+  },
+  "author": "Dante <c.dante.federici@gmail.com> (http://dante.codes/)",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/bluum-life/shoot/issues"
+  },
+  "homepage": "https://github.com/bluum-life/shoot#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "rollup": "^0.41.6"
+  }
+}
