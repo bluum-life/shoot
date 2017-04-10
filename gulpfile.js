@@ -1,5 +1,17 @@
 const gulp = require('gulp');
 const rollup = require('rollup');
+const pug = require('gulp-pug');
+
+const pugConfig = {
+	pageTitle: 'blüüm'
+};
+
+gulp.task('html', () => gulp.src('./src/*.pug')
+	.pipe(pug({
+		data: pugConfig
+	}))
+	.pipe(gulp.dest('bin'))
+);
 
 gulp.task('js', () => rollup.rollup({
 	entry: './src/index.js', 
@@ -12,4 +24,4 @@ gulp.task('js', () => rollup.rollup({
 	});
 }));
 
-gulp.task('build', ['js']);
+gulp.task('build', ['js', 'html']);

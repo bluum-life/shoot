@@ -19,6 +19,8 @@
   "homepage": "https://github.com/bluum-life/shoot#readme",
   "devDependencies": {
     "gulp": "^3.9.1",
+    "gulp-pug": "^3.3.0",
+    "pug": "^2.0.0-beta11",
     "rollup": "^0.41.6"
   }
 }
