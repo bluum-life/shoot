@@ -22,7 +22,7 @@ export class MockSockServer {
 	}
 	
 	broadcast(msg) {
-		socks.forEach(sock => {
+		this.socks.forEach(sock => {
 			if (sock.onmessage) {
 				sock.onmessage({
 					type: 'MockEvent',

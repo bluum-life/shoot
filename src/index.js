@@ -5,11 +5,21 @@ const sock = mocks.sock;
 
 // END MOCKS
 // import * as sock from './socket';
-import * as msg from './messages';
-import { buildField } from './fields';
+import { MessageType } from './messages';
 import { bootstrap } from './doc';
 
 
+// API
+import { buildField } from './fields';
+class RootApi {
+	constructor(elt) {
+		this.fields = {};
+	}
+
+	declareField(id, msg) {
+		
+	}
+}
 
 
 /**
@@ -17,34 +27,42 @@ import { bootstrap } from './doc';
  * @param {Message} msg
  * @void
  */
-const routeMessage = (msg) => {
-	console.debug('Message received: ', msg);
+const newRouter = api => msg => {
+	console.info('Message received: ', msg);
+	switch (msg.type) {
+		case MessageType.DeclareField:
+			return api.declareField(msg.id, msg.field);
+		default:
+			console.error('Unhandled message.', msg);
+	}
 };
 
 
 // Code to run once the document is bootstrapped
 bootstrap((doc) => {
-	console.debug('LOADED', doc.body);
+	console.info('LOADED', doc.body);
 	
+	// Init DOM
 	doc.querySelector('.loading-display').remove();
+	const rootElt = doc.createElement('div')
+	doc.body.appendChild(rootElt);
 
-	doc.body.appendChild(
-		doc.createElement('div')
-	);
+	// Make app
+	const api = new RootApi(rootElt);
+	const router = newRouter(api);
 
 	// Create the WS connection -- for now, assume same as host
 	const ws = sock.connect(location.hostname);
 	ws.onmessage = (evt) => {
-		console.debug('WS event: ', evt);
+		console.info('WS event: ', evt);
 		try {
 			const data = JSON.parse(evt.data);
-			routeMessage(data);
+			router(data);
 		} catch (err) {
 			console.error('Parse error: ', err);
 		}
 	};
-	
-	
+
 	///////// @todo: remove mock kickoff
 	mocks.firstTest();
 });
