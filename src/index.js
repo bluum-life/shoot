@@ -1,7 +1,7 @@
 // MOCKING
-import * as mocks from './mock';
-console.debug('First mock test: ', mocks);
-const sock = mocks.sock;
+// import * as mocks from './mock';
+// console.debug('First mock test: ', mocks);
+// const sock = mocks.sock;
 
 // END MOCKS
 // import * as sock from './socket';
@@ -85,5 +85,5 @@ bootstrap((doc) => {
 	});
 
 	///////// @todo: remove mock kickoff
-	mocks.firstTest();
+	// mocks.firstTest();
 });
