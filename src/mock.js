@@ -70,6 +70,10 @@ export class MockSock {
 		console.info('MockSock::Connection', addr, protocols);
 		rootServer.addSock(this);
 	}
+	
+	send(msg) {
+		console.info('MockSockSend:', msg);
+	}
 };
 
 export const sock = {

@@ -81,7 +81,7 @@ bootstrap((doc) => {
 	
 	// Register to api
 	api.l.map(evt => {
-		console.debug(evt);
+		ws.send(JSON.stringify(evt));
 	});
 
 	///////// @todo: remove mock kickoff
