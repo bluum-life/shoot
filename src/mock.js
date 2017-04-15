@@ -49,7 +49,7 @@ export const firstTest = (delay = 0) => {
 		msg.declareField(i++, msg.boolField('Power', true)),
 		msg.declareField(i++, msg.rangeField('Brightness', 1, 255, 150)),
 		msg.declareField(i++, msg.selectField('Pattern', ['A', 'B', 'C'], 1)),
-		msg.declareField(i++, msg.selectField('Speed', 1, 255, 30)),
+		msg.declareField(i++, msg.rangeField('Speed', 1, 255, 30)),
 		msg.declareField(i++, msg.colorField('Color', 114, 0, 255)),
 	];
 	

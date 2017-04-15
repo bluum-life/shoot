@@ -1,12 +1,60 @@
 import { FieldType } from './messages';
 
-const newRangeField = (msg) => {
-	console.debug(msg);
+const base = (msg) => {
+	const elt = document.createElement('div');
+	elt.classList.add('field');
+	const label = document.createElement('label');
+	label.textContent = msg.label;
+	elt.appendChild(label);
+	return { elt, label };
+}
+
+const newInput = (msg) => {
+	const b = base(msg);
+	b.input = document.createElement('input');
+	b.elt.appendChild(b.input);
+	return b;
 };
 
-const newColorField = (msg) => console.debug('@todo', msg);
-const newSelectField = (msg) => console.debug('@todo', msg);
-const newBoolField = (msg) => console.debug('@todo', msg);
+const newRangeField = (msg) => {
+	const f = newInput(msg);
+	
+	f.input.setAttribute('name', msg.label);
+	f.input.setAttribute('value', msg.value);
+	f.input.setAttribute('min', msg.min);
+	f.input.setAttribute('max', msg.max);
+	f.input.setAttribute('type', 'number');
+
+	return f;
+};
+
+const newColorField = (msg) => {
+	const f = newInput(msg);
+	return f;
+};
+
+const newSelectField = (msg) => {
+	const b = base(msg);
+	console.debug(msg);
+	b.select = document.createElement('select');
+	b.options = msg.options.map((option, i) => {
+		const opt = document.createElement('option');
+		opt.value = option;
+		opt.textContent = option;
+		if (i === msg.selected) {
+			opt.setAttribute('selected', true);
+		}
+		b.select.appendChild(opt);
+		return opt;
+	});
+	b.elt.appendChild(b.select);
+	return b;
+};
+
+const newBoolField = (msg) => {
+	const f = newInput(msg);
+	return f;
+};
 
 /**
  * @param {DeclareFieldMessage} msg
@@ -18,11 +66,11 @@ export const buildField = (msg) => {
 			return newRangeField(msg);
 		case FieldType.Color:
 			return newColorField(msg);
-		case FieldType.Selection:
+		case FieldType.Select:
 			return newSelectField(msg);
 		case FieldType.Bool:
 			return newBoolField(msg);
 		default:
-			throw new Error(`Unhandled: ${msg}`);
+			console.error('Unhandled', msg);
 	}
 };

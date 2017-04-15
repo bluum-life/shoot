@@ -12,12 +12,27 @@ import { bootstrap } from './doc';
 // API
 import { buildField } from './fields';
 class RootApi {
-	constructor(elt) {
+	constructor(doc, parent) {
 		this.fields = {};
+		
+		// Configure
+		this.elt = doc.createElement('div')
+
+		this.fields = doc.createElement('div');
+		this.fields.classList.add('fields');
+		
+		// Add to dom
+		parent.appendChild(this.elt);
+		this.elt.appendChild(this.fields);
 	}
 
 	declareField(id, msg) {
-		
+		if (this.fields[id]) {
+			console.error('Existing field: ', id, msg);
+		} else {
+			const field = buildField(msg);
+			this.elt.appendChild(field.elt);
+		}
 	}
 }
 
@@ -44,11 +59,9 @@ bootstrap((doc) => {
 	
 	// Init DOM
 	doc.querySelector('.loading-display').remove();
-	const rootElt = doc.createElement('div')
-	doc.body.appendChild(rootElt);
 
 	// Make app
-	const api = new RootApi(rootElt);
+	const api = new RootApi(doc, doc.body);
 	const router = newRouter(api);
 
 	// Create the WS connection -- for now, assume same as host
