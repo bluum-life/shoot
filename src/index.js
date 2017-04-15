@@ -31,7 +31,7 @@ class RootApi {
 			console.error('Existing field: ', id, msg);
 		} else {
 			this.fields[id] = buildField(msg);
-			this.fieldsElt.appendChild(this.fields[id].elt);
+			this.fieldsElt.appendChild(this.fields[id].f.elt);
 		}
 	}
 }
