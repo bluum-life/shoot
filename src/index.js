@@ -10,7 +10,7 @@ import { bootstrap } from './doc';
 
 
 // API
-import { buildField } from './fields';
+import { buildField, listener } from './fields';
 class RootApi {
 	constructor(doc, parent) {
 		this.fields = {};
@@ -24,6 +24,8 @@ class RootApi {
 		// Add to dom
 		parent.appendChild(this.elt);
 		this.elt.appendChild(this.fieldsElt);
+		
+		this.l = listener();
 	}
 
 	declareField(id, msg) {
@@ -32,6 +34,7 @@ class RootApi {
 		} else {
 			this.fields[id] = buildField(msg);
 			this.fieldsElt.appendChild(this.fields[id].f.elt);
+			this.fields[id].ctrl.l.map(this.l.emit);
 		}
 	}
 }
@@ -75,6 +78,11 @@ bootstrap((doc) => {
 			console.error('Parse error: ', err);
 		}
 	};
+	
+	// Register to api
+	api.l.map(evt => {
+		console.debug(evt);
+	});
 
 	///////// @todo: remove mock kickoff
 	mocks.firstTest();

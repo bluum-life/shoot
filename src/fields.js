@@ -1,26 +1,22 @@
 import { FieldType } from './messages';
 
-const listener = () => {
-	const listeners = {};
-	const add = (key, fn) => {
-		listeners[key] = listeners[key] ? [fn] : listeners[key].concat(fn);
+export const listener = () => {
+	const registry = [];
+	const map = (fn) => {
+		registry.push(fn);
 		return () => {
-			const i = listeners[key].indexOf(fn);
+			const i = registry.indexOf(fn);
 			if (i !== -1) {
-				listeners[key].splice(i, 1);
+				registry.splice(i, 1);
 			}
 		}
 	}
 
-	const emitKey = (key, msg) => {
-		listeners[key].forEach(fn => fn(msg));
+	const emit = (msg) => {
+		registry.forEach(fn => fn(msg));
 	};
 
-	const broadcast = (msg) => {
-		Object.keys(listeners).forEach(key => emitKey(key, msg));
-	};
-
-	return { listeners, add, emitKey, broadcast };
+	return { registry, map, emit };
 }
 
 class FieldCtrl {
@@ -29,13 +25,14 @@ class FieldCtrl {
 		this.l = listener();
 		
 		if (type !== FieldType.Bool) {
-			b.input.addEventListener('change', (evt) => {
-				this.l.emitKey('input', evt);
-			});
+			b.input.addEventListener('change', x =>
+				this.l.emit({
+					type: 'change',
+					value: x.target.value
+				})
+			);
 		} else {
-			b.input.addEventListener('click', (evt) => {
-				this.l.emitKey('input', evt);
-			});
+			b.input.addEventListener('click', this.l.emit);
 		}
 	}
 	
