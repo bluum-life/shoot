@@ -22,24 +22,24 @@ const newInput = (msg) => {
 };
 
 const newRangeField = (msg) => {
-	const f = newInput(msg);
+	const b = newInput(msg);
 	
-	f.input.setAttribute('name', msg.label);
-	f.input.setAttribute('value', msg.value);
-	f.input.setAttribute('min', msg.min);
-	f.input.setAttribute('max', msg.max);
-	f.input.setAttribute('type', 'number');
+	b.input.setAttribute('name', msg.label);
+	b.input.setAttribute('value', msg.value);
+	b.input.setAttribute('min', msg.min);
+	b.input.setAttribute('max', msg.max);
+	b.input.setAttribute('type', 'number');
 
-	return f;
+	return b;
 };
 
 const newColorField = (msg) => {
-	const f = newInput(msg);
+	const b = newInput(msg);
 	
-	f.input.setAttribute('type', 'color');
-	f.input.setAttribute('value', colorToHex(msg));
+	b.input.setAttribute('type', 'color');
+	b.input.setAttribute('value', colorToHex(msg));
 	
-	return f;
+	return b;
 };
 
 const newSelectField = (msg) => {
@@ -60,8 +60,11 @@ const newSelectField = (msg) => {
 };
 
 const newBoolField = (msg) => {
-	const f = newInput(msg);
-	return f;
+	const b = base(msg);
+	b.button = document.createElement('button');
+	b.button.textContent = msg.value ? 'Turn Off' : 'Turn On';
+	b.elt.appendChild(b.button);
+	return b;
 };
 
 /**

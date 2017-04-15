@@ -58,7 +58,7 @@ export const FieldType = {
  * @typedef {Field} BoolField
  * @property {Boolean} value - Default value
  */
-export const boolField = (label, min, max, value) => ({ type: FieldType.Bool, label, value });
+export const boolField = (label, value) => ({ type: FieldType.Bool, label, value });
 
 /**
  * A numeric field. Min and max can be missing to declare unbounded ranges.
