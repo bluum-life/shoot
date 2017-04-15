@@ -38,24 +38,17 @@ export const rootServer = new MockSockServer();
 
 
 // Export first test on the root server
-// const fields = {
-// 	baseColor: ,
-// 	effects: msg.selectionField(['A', 'B', 'C'], 2),
-// };
-
+export const firstCmds = [
+	msg.declareField(0, msg.boolField('Power', true)),
+	msg.declareField(1, msg.rangeField('Brightness', 1, 255, 150)),
+	msg.declareField(2, msg.selectField('Pattern', ['A', 'B', 'C'], 1)),
+	msg.declareField(3, msg.rangeField('Speed', 1, 255, 30)),
+	msg.declareField(4, msg.colorField('Color', 114, 0, 255)),
+];
 export const firstTest = (delay = 0) => {
-	let i = 0;
-	const cmds = [
-		msg.declareField(i++, msg.boolField('Power', true)),
-		msg.declareField(i++, msg.rangeField('Brightness', 1, 255, 150)),
-		msg.declareField(i++, msg.selectField('Pattern', ['A', 'B', 'C'], 1)),
-		msg.declareField(i++, msg.rangeField('Speed', 1, 255, 30)),
-		msg.declareField(i++, msg.colorField('Color', 114, 0, 255)),
-	];
-	
 	const recurse = (idx) => {
-		if (idx < cmds.length) {
-			rootServer.broadcast(cmds[idx]);
+		if (idx < firstCmds.length) {
+			rootServer.broadcast(firstCmds[idx]);
 			setTimeout(() => recurse(idx + 1), delay);
 		}
 	}

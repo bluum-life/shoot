@@ -6,14 +6,17 @@
  */
 export const MessageType = {
 	Status: 0,
-	DeclareField: 1,
-	FieldValue: 2,
+	Batch: 1,
+	DeclareField: 2,
+	FieldValue: 3,
 };
 
 /**
  * @typedef {Object} Message
  * @property {MessageType} type
  */
+
+export const batch = (messages) => ({ type: MessageType.Batch, messages });
 
 /**
  * @typedef {Message} DeclareFieldMessage
