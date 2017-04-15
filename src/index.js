@@ -1,7 +1,9 @@
 import * as sock from './socket';
 import * as msg from './messages';
-import * as mocks from './mock';
 import { bootstrap } from './doc';
+
+// import * as mocks from './mock';
+// console.debug('First mock test: ', mocks.firstTest);
 
 /**
  * Consume and route a message from the board
@@ -12,7 +14,6 @@ const routeMessage = (msg) => {
 	console.debug('Message received: ', msg);
 };
 
-console.debug('First mock test: ', mocks.firstTest);
 
 // Code to run once the document is bootstrapped
 bootstrap((doc) => {
@@ -20,7 +21,9 @@ bootstrap((doc) => {
 	
 	doc.querySelector('.loading-display').remove();
 
-	doc.body.appendChild('div');
+	doc.body.appendChild(
+		doc.createElement('div')
+	);
 
 	// Create the WS connection -- for now, assume same as host
 	const ws = sock.connect(location.hostname);

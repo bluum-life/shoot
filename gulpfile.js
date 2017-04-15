@@ -1,6 +1,8 @@
 const gulp = require('gulp');
 const rollup = require('rollup');
 const pug = require('gulp-pug');
+const uglify = require('rollup-plugin-uglify');
+const minify = require('uglify-js-harmony').minify;
 
 const pugConfig = {
 	pageTitle: 'blüüm'
@@ -14,7 +16,10 @@ gulp.task('html', () => gulp.src('./src/*.pug')
 );
 
 gulp.task('js', () => rollup.rollup({
-	entry: './src/index.js', 
+	entry: './src/index.js',
+	plugins: [
+		uglify({}, minify)
+	]
 }).then((bundle) => {
 	bundle.write({
 		format: '',
@@ -25,3 +30,9 @@ gulp.task('js', () => rollup.rollup({
 }));
 
 gulp.task('build', ['js', 'html']);
+
+gulp.task('watch', () => {
+	gulp.watch('src/**/*', ['build']);
+})
+
+gulp.task('default', ['watch', 'build']);

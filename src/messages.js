@@ -5,8 +5,9 @@
  * @readonly
  */
 export const MessageType = {
-	DeclareField: 0,
-	FieldValue: 1,
+	Status: 0,
+	DeclareField: 1,
+	FieldValue: 2,
 };
 
 /**
