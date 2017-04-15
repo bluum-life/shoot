@@ -18,7 +18,9 @@ gulp.task('html', () => gulp.src('./src/*.pug')
 gulp.task('js', () => rollup.rollup({
 	entry: './src/index.js',
 	plugins: [
-		uglify({}, minify)
+		// uglify({
+		// 	outSourceMap: 'shoot.js.map'
+		// }, minify)
 	]
 }).then((bundle) => {
 	bundle.write({

@@ -40,7 +40,8 @@ export const fieldValue = (id, value) => ({ type: MessageType.FieldValue, id, va
 export const FieldType = {
 	Range: 0,
 	Color: 1,
-	Selection: 2,
+	Select: 2,
+	Bool: 3,
 };
 
 /**
@@ -52,6 +53,14 @@ export const FieldType = {
  */
 
 /**
+ * A boolean field
+ * 
+ * @typedef {Field} BoolField
+ * @property {Boolean} value - Default value
+ */
+export const boolField = (label, min, max, value) => ({ type: FieldType.Bool, label, value });
+
+/**
  * A numeric field. Min and max can be missing to declare unbounded ranges.
  * 
  * @typedef {Field} RangeField
@@ -59,17 +68,19 @@ export const FieldType = {
  * @property {Number} max - Maximum value
  * @property {Number} value - Default value
  */
-export const rangeField = (min, max, value) => ({ type: FieldType.Range, min, max, value });
+export const rangeField = (label, min, max, value) => ({ type: FieldType.Range, label, min, max, value });
 
 /**
  * @typedef {Field} ColorField
- * @property {Number} value - The color in an integer field -- 0xRRGGBB
+ * @property {Number} r - Red byte
+ * @property {Number} g - Green byte
+ * @property {Number} b - Blue byte
  */
-export const colorField = (value) => ({ type: FieldType.Color, value });
+export const colorField = (label, r, g, b) => ({ type: FieldType.Color, r, g, b });
 
 /**
- * @typedef {Field} SelectionField
+ * @typedef {Field} SelectField
  * @property {String[]} options - Possible options for the selection
  * @property {Number} selected - The index of the default selected option
  */
-export const selectionField = (options, selected = 0) => ({ type: FieldType.Selection, options, selected });
+export const selectField = (label, options, selected = 0) => ({ type: FieldType.Select, label, options, selected });

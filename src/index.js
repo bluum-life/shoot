@@ -1,9 +1,16 @@
-import * as sock from './socket';
+// MOCKING
+import * as mocks from './mock';
+console.debug('First mock test: ', mocks);
+const sock = mocks.sock;
+
+// END MOCKS
+// import * as sock from './socket';
 import * as msg from './messages';
+import { buildField } from './fields';
 import { bootstrap } from './doc';
 
-// import * as mocks from './mock';
-// console.debug('First mock test: ', mocks.firstTest);
+
+
 
 /**
  * Consume and route a message from the board
@@ -36,5 +43,8 @@ bootstrap((doc) => {
 			console.error('Parse error: ', err);
 		}
 	};
-
+	
+	
+	///////// @todo: remove mock kickoff
+	mocks.firstTest();
 });
