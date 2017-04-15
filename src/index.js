@@ -14,24 +14,24 @@ import { buildField } from './fields';
 class RootApi {
 	constructor(doc, parent) {
 		this.fields = {};
-		
+
 		// Configure
 		this.elt = doc.createElement('div')
 
-		this.fields = doc.createElement('div');
-		this.fields.classList.add('fields');
+		this.fieldsElt = doc.createElement('div');
+		this.fieldsElt.classList.add('fields');
 		
 		// Add to dom
 		parent.appendChild(this.elt);
-		this.elt.appendChild(this.fields);
+		this.elt.appendChild(this.fieldsElt);
 	}
 
 	declareField(id, msg) {
 		if (this.fields[id]) {
 			console.error('Existing field: ', id, msg);
 		} else {
-			const field = buildField(msg);
-			this.elt.appendChild(field.elt);
+			this.fields[id] = buildField(msg);
+			this.fieldsElt.appendChild(this.fields[id].elt);
 		}
 	}
 }

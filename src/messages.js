@@ -76,7 +76,7 @@ export const rangeField = (label, min, max, value) => ({ type: FieldType.Range, 
  * @property {Number} g - Green byte
  * @property {Number} b - Blue byte
  */
-export const colorField = (label, r, g, b) => ({ type: FieldType.Color, r, g, b });
+export const colorField = (label, r, g, b) => ({ type: FieldType.Color, label, r, g, b });
 
 /**
  * @typedef {Field} SelectField

@@ -1,5 +1,10 @@
 import { FieldType } from './messages';
 
+const hex = num => {
+	const s = num.toString(16);
+	return s.length === 1 ? `0${s}` : s;
+}
+const colorToHex = msg =>  `#${hex(msg.r)}${hex(msg.g)}${hex(msg.b)}`;
 const base = (msg) => {
 	const elt = document.createElement('div');
 	elt.classList.add('field');
@@ -30,12 +35,15 @@ const newRangeField = (msg) => {
 
 const newColorField = (msg) => {
 	const f = newInput(msg);
+	
+	f.input.setAttribute('type', 'color');
+	f.input.setAttribute('value', colorToHex(msg));
+	
 	return f;
 };
 
 const newSelectField = (msg) => {
 	const b = base(msg);
-	console.debug(msg);
 	b.select = document.createElement('select');
 	b.options = msg.options.map((option, i) => {
 		const opt = document.createElement('option');
