@@ -150,8 +150,8 @@ export const deserializeMessage = (msg) => {
 		case messages.MessageType.DeclareField: {
 			console.debug('DeclareField declare', view);
 			const id = view.getUint8(1);
-			const field = deserializeField(msg.slice(1));
-			return messages.declareField(id, filed);
+			const field = deserializeField(msg.slice(2));
+			return messages.declareField(id, field);
 		}
 
 		case messages.MessageType.FieldValue: {
