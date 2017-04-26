@@ -1,4 +1,5 @@
 import * as msg from './messages';
+import * as ser from './serialize';
 const unimpl = (l) => { throw new Error('Unimplemented method.') };
 
 export class MockSockServer {
@@ -27,7 +28,7 @@ export class MockSockServer {
 			if (sock.onmessage) {
 				sock.onmessage({
 					type: 'MockEvent',
-					data: JSON.stringify(msg)
+					data: ser.serializeMessage(msg)
 				});
 			}
 		});

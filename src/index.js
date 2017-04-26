@@ -1,11 +1,12 @@
 // MOCKING
-// import * as mocks from './mock';
-// console.debug('First mock test: ', mocks);
-// const sock = mocks.sock;
+import * as mocks from './mock';
+console.debug('First mock test: ', mocks);
+const sock = mocks.sock;
 
 // END MOCKS
-import * as sock from './socket';
+// import * as sock from './socket';
 import { MessageType, batch } from './messages';
+import * as ser from './serialize';
 import { bootstrap } from './doc';
 
 
@@ -74,7 +75,7 @@ bootstrap((doc) => {
 	ws.onmessage = (evt) => {
 		console.info('WS event: ', evt);
 		try {
-			const data = JSON.parse(evt.data);
+			const data = ser.deserializeMessage(evt.data);
 			router(data);
 		} catch (err) {
 			console.error('Parse error: ', err);
@@ -91,14 +92,15 @@ bootstrap((doc) => {
 	view.setUint8(1, 20);
 	view.setFloat32(2, Math.PI); // 32/8 = 4 bytes, 4 + 2 = 6, we're full
 
-	// Register to api
+	// Register to api listener l
 	api.l.map(evt => {
-		ws.send(JSON.stringify(evt));
-		// @todo: womp womp
-		ws.send(view.buffer);
+		console.debug('!!! Root api listener', evt);
+		// ws.send(JSON.stringify(evt));
+		// // @todo: womp womp
+		// ws.send(view.buffer);
 	});
 
 	///////// @todo: remove mock kickoff
-	// mocks.firstTest();
-	// mocks.rootServer.broadcast(batch(mocks.firstCmds));
+	mocks.firstTest();
+	mocks.rootServer.broadcast(batchDeclare(mocks.firstCmds));
 });

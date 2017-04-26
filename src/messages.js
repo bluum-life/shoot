@@ -7,17 +7,42 @@
 export const MessageType = {
 	Unknown: 0,
 	Status: 1,
-	Batch: 2,
+	BatchDeclare: 2,
 	DeclareField: 3,
 	FieldValue: 4,
 };
+
+/**
+ * Supported types of fields.
+ * 
+ * @enum {Number}
+ * @readonly
+ */
+export const FieldType = {
+	Unknown: 0,
+	Range: 1,
+	Color: 2,
+	Select: 3,
+	Bool: 4,
+};
+
 
 /**
  * @typedef {Object} Message
  * @property {MessageType} type
  */
 
-export const batch = (messages) => ({ type: MessageType.Batch, messages });
+/**
+ * A set of field declarations
+ * @typedef	{Message} BatchDeclare
+ * @property {DeclareFieldMessage[]} messages
+ */
+
+/**
+ * @param {DeclareFieldMessage[]} messages
+ * @returns {BatchDeclare}
+ */
+export const batchDeclare = (messages) => ({ type: MessageType.Batch, messages });
 
 /**
  * @typedef {Message} DeclareFieldMessage
@@ -34,20 +59,6 @@ export const declareField = (id, field) => ({ type: MessageType.DeclareField, id
  * @property {String|Number} value - The value to place in that field, type based on field type
  */
 export const fieldValue = (id, value) => ({ type: MessageType.FieldValue, id, value });
-
-/**
- * Supported types of fields.
- * 
- * @enum {Number}
- * @readonly
- */
-export const FieldType = {
-	Unknown: 0,
-	Range: 1,
-	Color: 2,
-	Select: 3,
-	Bool: 4,
-};
 
 /**
  * A field is a configurable property.
