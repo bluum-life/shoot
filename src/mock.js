@@ -1,4 +1,5 @@
 import * as msg from './messages';
+const unimpl = (l) => { throw new Error('Unimplemented method.') };
 
 export class MockSockServer {
 	
@@ -57,12 +58,28 @@ export const firstTest = (delay = 0) => {
 };
 
 
-
 export class MockSock {
 	constructor(addr, protocols) {
 		console.info('MockSock::Connection', addr, protocols);
+		this.url = addr;
 		rootServer.addSock(this);
+
+		// Ugh
+		this.binaryType = '';
+		this.bufferedAmount = 0;
+		this.extensions = '';
+		this.protocol = '';
+		this.readyState = 1; // @todo: 0 = connecting, 1 = optn, 2 = closing, 3 = closed
+		this.onclose = unimpl;
+		this.onmessage = unimpl;
+		this.onerror = unimpl;
+		this.onopen = unimpl;
 	}
+	
+	// close(code, reason) {
+	// 	this.onclose(code, reason);
+	// 	rootServer
+	// }
 	
 	send(msg) {
 		console.info('MockSockSend:', msg);
@@ -79,6 +96,5 @@ export const sock = {
 		const ws = new MockSock(`ws://${address}:81/`, ['arduino']);
 		return ws;
 	}
-	
 };
 

@@ -80,10 +80,22 @@ bootstrap((doc) => {
 			console.error('Parse error: ', err);
 		}
 	};
-	
+
+	ws.onerror = (error) => {
+		console.error('Sock error: ', error);
+	}
+
+	// @todo: hacking api buffer
+	const view = new DataView(new ArrayBuffer(6*8)); // 6 bytes (?)
+	view.setUint8(0, 10);
+	view.setUint8(1, 20);
+	view.setFloat32(2, Math.PI); // 32/8 = 4 bytes, 4 + 2 = 6, we're full
+
 	// Register to api
 	api.l.map(evt => {
 		ws.send(JSON.stringify(evt));
+		// @todo: womp womp
+		ws.send(view.buffer);
 	});
 
 	///////// @todo: remove mock kickoff

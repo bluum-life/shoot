@@ -5,10 +5,11 @@
  * @readonly
  */
 export const MessageType = {
-	Status: 0,
-	Batch: 1,
-	DeclareField: 2,
-	FieldValue: 3,
+	Unknown: 0,
+	Status: 1,
+	Batch: 2,
+	DeclareField: 3,
+	FieldValue: 4,
 };
 
 /**
@@ -41,10 +42,11 @@ export const fieldValue = (id, value) => ({ type: MessageType.FieldValue, id, va
  * @readonly
  */
 export const FieldType = {
-	Range: 0,
-	Color: 1,
-	Select: 2,
-	Bool: 3,
+	Unknown: 0,
+	Range: 1,
+	Color: 2,
+	Select: 3,
+	Bool: 4,
 };
 
 /**
