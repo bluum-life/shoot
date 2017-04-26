@@ -42,7 +42,7 @@ export const FieldType = {
  * @param {DeclareFieldMessage[]} messages
  * @returns {BatchDeclare}
  */
-export const batchDeclare = (messages) => ({ type: MessageType.Batch, messages });
+export const batchDeclare = (messages) => ({ type: MessageType.BatchDeclare, messages });
 
 /**
  * @typedef {Message} DeclareFieldMessage

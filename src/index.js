@@ -5,7 +5,7 @@ const sock = mocks.sock;
 
 // END MOCKS
 // import * as sock from './socket';
-import { MessageType, batch } from './messages';
+import { MessageType, batchDeclare } from './messages';
 import * as ser from './serialize';
 import { bootstrap } from './doc';
 
@@ -49,7 +49,7 @@ class RootApi {
 const newRouter = api => msg => {
 	console.info('Message received: ', msg);
 	switch (msg.type) {
-		case MessageType.Batch:
+		case MessageType.BatchDeclare:
 				return msg.messages.forEach(newRouter(api));
 		case MessageType.DeclareField:
 			return api.declareField(msg.id, msg.field);
@@ -101,6 +101,6 @@ bootstrap((doc) => {
 	});
 
 	///////// @todo: remove mock kickoff
-	mocks.firstTest();
+	// mocks.firstTest();
 	mocks.rootServer.broadcast(batchDeclare(mocks.firstCmds));
 });

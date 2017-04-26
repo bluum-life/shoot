@@ -3,6 +3,7 @@ import { concatBuffer } from './util';
 
 const ID_SIZE = 1;
 const TYPE_SIZE = 1;
+const LENGTH_SIZE = 1;
 
 /**
  * Helper to stream values to an array buffer.
@@ -19,6 +20,8 @@ const stream = length => {
 }
 
 const strBuff = str => new ArrayBuffer(0); // @todo: what does bin str come in as?
+
+const serializeFieldSize = fieldType => 2;
 
 // I didn't use protobuf because js libs are >20k :/
 
@@ -64,9 +67,18 @@ export const serializeField = (field) => {
 export const serializeMessage = (msg) => {
 	// @todo: send a message to the server
 	switch (msg.type) {
-		case messages.MessageType.BatchDeclare:
-			console.debug('@todo: Serialize BatchDeclare', msg);
-			return new ArrayBuffer();
+		case messages.MessageType.BatchDeclare: {
+			// type, length, ...messages
+			const base = stream(TYPE_SIZE + LENGTH_SIZE)
+				.set(0, messages.MessageType.BatchDeclare)
+				.set(1, msg.messages.length)
+				.value();
+			console.debug(msg);
+			return msg.messages.reduce((buff, x) =>
+				concatBuffer(buff, serializeMessage(x)),
+				base
+			);
+		}
 
 		case messages.MessageType.Status:
 			console.debug('@todo: Serialize Status', msg);
@@ -136,9 +148,19 @@ export const deserializeMessage = (msg) => {
 	// Read the type
 	const type = view.getUint8(0);
 	switch (type) {
+		// [type, length, ...messages]
 		case messages.MessageType.BatchDeclare: {
-			console.debug('Batch declare', view);
-			return messages.batchDeclare();
+			const length = view.getUint8(1);
+			const list = [];
+			let subBuffer = msg.slice(2);
+			for (let i = 0; i < length; i++) {
+				const f = deserializeMessage(subBuffer);
+				list.push(f);
+				console.debug('@todo: slice down based on length consumed!!! New msg?: ', list);
+				// @todo: slice down based on length?
+				subBuffer = subBuffer.slice(serializeFieldSize(f.type));
+			}
+			return messages.batchDeclare(list);
 		}
 
 		case messages.MessageType.Status: {
@@ -148,7 +170,6 @@ export const deserializeMessage = (msg) => {
 
 		// Deserialize as  [type id, field]
 		case messages.MessageType.DeclareField: {
-			console.debug('DeclareField declare', view);
 			const id = view.getUint8(1);
 			const field = deserializeField(msg.slice(2));
 			return messages.declareField(id, field);
