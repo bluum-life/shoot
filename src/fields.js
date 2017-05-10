@@ -1,43 +1,34 @@
 import { FieldType } from './messages';
+import { listener } from './util';
 
-export const listener = () => {
-	const registry = [];
-	const map = (fn) => {
-		registry.push(fn);
-		return () => {
-			const i = registry.indexOf(fn);
-			if (i !== -1) {
-				registry.splice(i, 1);
-			}
-		}
-	}
-
-	const emit = (msg) => {
-		registry.forEach(fn => fn(msg));
-	};
-
-	return { registry, map, emit };
-}
+const OFF_VAL = 'Turn On';
+const ON_VAL = 'Turn Off';
 
 class FieldCtrl {
-	constructor(type, b) {
+	constructor(type, fieldBase) {
 		this.type = type;
 		this.l = listener();
-		
+		this.value = fieldBase.value;
+
 		if (type !== FieldType.Bool) {
-			b.input.addEventListener('change', x =>
+			fieldBase.input.addEventListener('change', x =>
 				this.l.emit({
 					type: 'change',
 					value: x.target.value
 				})
 			);
 		} else {
-			b.input.addEventListener('click', this.l.emit);
+			fieldBase.input.addEventListener('click', () => {
+				this.l.emit({
+					type: 'change',
+					value: !this.value
+				});
+			});
 		}
 	}
-	
+
 	listenInput(fn) {
-		this.l.add('input', fn);
+		this.l.map(fn);
 	}
 	
 	onChange(changes) {
@@ -57,7 +48,7 @@ const base = (msg) => {
 	const label = document.createElement('label');
 	label.textContent = msg.label;
 	elt.appendChild(label);
-	return { elt, label };
+	return { elt, label, type: msg.type };
 }
 
 const newInput = (msg) => {
@@ -69,9 +60,9 @@ const newInput = (msg) => {
 
 const newRangeField = (msg) => {
 	const b = newInput(msg);
-	
+	b.value = msg.value;
 	b.input.setAttribute('name', msg.label);
-	b.input.setAttribute('value', msg.value);
+	b.input.setAttribute('value', b.value);
 	b.input.setAttribute('min', msg.min);
 	b.input.setAttribute('max', msg.max);
 	b.input.setAttribute('type', 'number');
@@ -81,15 +72,16 @@ const newRangeField = (msg) => {
 
 const newColorField = (msg) => {
 	const b = newInput(msg);
-	
+	b.value = { r: msg.r, g: msg.g, b: msg.b };
 	b.input.setAttribute('type', 'color');
-	b.input.setAttribute('value', colorToHex(msg));
+	b.input.setAttribute('value', colorToHex(b.value));
 	
 	return b;
 };
 
 const newSelectField = (msg) => {
 	const b = base(msg);
+	b.value = msg.selected;
 	b.input = document.createElement('select');
 	b.options = msg.options.map((option, i) => {
 		const opt = document.createElement('option');
@@ -107,8 +99,9 @@ const newSelectField = (msg) => {
 
 const newBoolField = (msg) => {
 	const b = base(msg);
+	b.value = msg.value;
 	b.input = document.createElement('button');
-	b.input.textContent = msg.value ? 'Turn Off' : 'Turn On';
+	b.input.textContent = b.value ? ON_VAL : OFF_VAL;
 	b.elt.appendChild(b.input);
 	return b;
 };
@@ -133,9 +126,10 @@ export const getField = (msg) => {
 };
 
 export const buildField = (msg) => {
-	const f = getField(msg);
+	console.debug('Field: ', msg);
+	const field = getField(msg);
 	
-	const ctrl = new FieldCtrl(msg.type, f);
+	const ctrl = new FieldCtrl(msg.type, field);
 	
-	return { f, ctrl };
+	return { field, ctrl };
 };

@@ -1,17 +1,18 @@
 // MOCKING
-import * as mocks from './mock';
-console.debug('First mock test: ', mocks);
-const sock = mocks.sock;
+// import * as mocks from './mock';
+// console.debug('First mock test: ', mocks);
+// const sock = mocks.sock;
 // END MOCKS
 
-// import * as sock from './socket';
-import { MessageType, batchDeclare } from './messages';
-import * as ser from './serialize';
+import * as sock from './socket';
+import { MessageType, batchDeclare, FieldType } from './messages';
+import { deserializeMessage } from './serialize';
 import { bootstrap } from './doc';
 import { declareFirstPass } from './fixedFields';
 
 // API
-import { buildField, listener } from './fields';
+import { buildField } from './fields';
+import { listener } from './util';
 class RootApi {
 	constructor(doc, parent) {
 		this.fields = {};
@@ -21,7 +22,7 @@ class RootApi {
 
 		this.fieldsElt = doc.createElement('div');
 		this.fieldsElt.classList.add('fields');
-		
+
 		// Add to dom
 		parent.appendChild(this.elt);
 		this.elt.appendChild(this.fieldsElt);
@@ -34,8 +35,10 @@ class RootApi {
 			console.error('Existing field: ', id, msg);
 		} else {
 			this.fields[id] = buildField(msg);
-			this.fieldsElt.appendChild(this.fields[id].f.elt);
-			this.fields[id].ctrl.l.map(this.l.emit);
+			this.fieldsElt.appendChild(this.fields[id].field.elt);
+			this.fields[id].ctrl.listenInput(event => {
+				this.l.emit({ id, value: event.value });
+			});
 		}
 	}
 }
@@ -61,7 +64,7 @@ const newRouter = api => msg => {
 
 // Code to run once the document is bootstrapped
 bootstrap((doc) => {
-	console.info('LOADED', doc.body);
+	// console.info('LOADED', doc.body);
 	
 	// Init DOM
 	doc.querySelector('.loading-display').remove();
@@ -73,9 +76,9 @@ bootstrap((doc) => {
 	// Create the WS connection -- for now, assume same as host
 	const ws = sock.connect(location.hostname);
 	ws.onmessage = (evt) => {
-		console.info('WS event: ', evt);
+		// console.info('WS event: ', evt);
 		try {
-			const data = ser.deserializeMessage(evt.data);
+			const data = deserializeMessage(evt.data);
 			router(data);
 		} catch (err) {
 			console.error('Parse error: ', err);

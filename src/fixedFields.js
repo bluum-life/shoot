@@ -10,8 +10,6 @@
  */
 import * as msg from './messages';
 
-
-
 /**
  * Crown first pass fields:
  * 
