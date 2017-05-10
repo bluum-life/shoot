@@ -19,8 +19,6 @@ const stream = length => {
 	return out;
 }
 
-const strBuff = str => new ArrayBuffer(0); // @todo: what does bin str come in as?
-
 const serializeFieldSize = fieldType => 2;
 
 // I didn't use protobuf because js libs are >20k :/

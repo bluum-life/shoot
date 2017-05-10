@@ -38,23 +38,15 @@ export class MockSockServer {
 export const rootServer = new MockSockServer();
 
 
-
 // Export first test on the root server
-export const firstCmds = [
-	msg.declareField(0, msg.boolField('Power', true)),
-	// msg.declareField(1, msg.rangeField('Brightness', 1, 255, 150)),
-	// msg.declareField(2, msg.selectField('Pattern', ['A', 'B', 'C'], 1)),
-	// msg.declareField(3, msg.rangeField('Speed', 1, 255, 30)),
-	// msg.declareField(4, msg.colorField('Color', 114, 0, 255)),
-];
-export const firstTest = (delay = 0) => {
+export const broadcastTest = (commands, delay = 0) => {
 	const recurse = (idx) => {
-		if (idx < firstCmds.length) {
-			rootServer.broadcast(firstCmds[idx]);
+		if (idx < commands.length) {
+			rootServer.broadcast(commands[idx]);
 			setTimeout(() => recurse(idx + 1), delay);
 		}
 	}
-	
+
 	recurse(0);
 };
 

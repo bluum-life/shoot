@@ -26,7 +26,6 @@ export const FieldType = {
 	Bool: 4,
 };
 
-
 /**
  * @typedef {Object} Message
  * @property {MessageType} type
