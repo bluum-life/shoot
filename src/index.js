@@ -2,13 +2,13 @@
 import * as mocks from './mock';
 console.debug('First mock test: ', mocks);
 const sock = mocks.sock;
-
 // END MOCKS
+
 // import * as sock from './socket';
 import { MessageType, batchDeclare } from './messages';
 import * as ser from './serialize';
 import { bootstrap } from './doc';
-
+import { declareFirstPass } from './fixedFields';
 
 // API
 import { buildField, listener } from './fields';
@@ -99,8 +99,11 @@ bootstrap((doc) => {
 		// // @todo: womp womp
 		// ws.send(view.buffer);
 	});
+	
+	// Fire off the first pass to the router
+	declareFirstPass.map(router);
 
 	///////// @todo: remove mock kickoff
 	// mocks.firstTest();
-	mocks.rootServer.broadcast(batchDeclare(mocks.firstCmds));
+	// mocks.rootServer.broadcast(declareFirstPass);
 });

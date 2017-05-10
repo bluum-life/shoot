@@ -27,7 +27,7 @@ import * as msg from './messages';
  */
 
 // Declare the fields @todo: sync this with root
-const declareFirstPass = msg.batchDeclare([
+export const declareFirstPass = [
 	// Settings
 	msg.declareField(0, msg.boolField('Power', true)),
 	msg.declareField(1, msg.rangeField('Brightness', 1, 255, 255)),
@@ -42,4 +42,4 @@ const declareFirstPass = msg.batchDeclare([
 	msg.declareField(6, msg.boolField('Sparkles', false)),
 	msg.declareField(7, msg.boolField('Pop-fade', false)),
 	msg.declareField(8, msg.boolField('Runner', false)),
-]);
+];

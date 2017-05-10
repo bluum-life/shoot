@@ -39,7 +39,7 @@ export const rootServer = new MockSockServer();
 
 
 // Export first test on the root server
-export const broadcastTest = (commands, delay = 0) => {
+export const broadcastTest = (commands = [], delay = 0) => {
 	const recurse = (idx) => {
 		if (idx < commands.length) {
 			rootServer.broadcast(commands[idx]);
