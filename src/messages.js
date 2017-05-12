@@ -54,10 +54,11 @@ export const declareField = (id, field) => ({ type: MessageType.DeclareField, id
 /**
  * @typedef {Message} FieldValueMessage
  * @property {MessageType} type - MessageType.FieldValue
+ * @property {FieldType} fieldType - The fieldtype for the value
  * @property {Number} id - The field id whose value you are receiving
- * @property {String|Number} value - The value to place in that field, type based on field type
+ * @property {Number} value - The value to place in that field, type based on field type
  */
-export const fieldValue = (id, value) => ({ type: MessageType.FieldValue, id, value });
+export const fieldValue = (fieldType, id, value) => ({ type: MessageType.FieldValue, fieldType, id, value });
 
 /**
  * A field is a configurable property.

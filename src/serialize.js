@@ -14,7 +14,8 @@ const stream = length => {
 	const buffer = new ArrayBuffer(length);
 	const view = new DataView(buffer);
 	const out = {};
-	out.set = (offset, val) => (view.setUint8(offset, val), out);
+	out.set8 = (offset, val) => (view.setUint8(offset, val), out);
+	out.set32 = (offset, val) => (view.setUint32(offset, val), out);
 	out.value = () => buffer;
 	return out;
 }
@@ -45,8 +46,8 @@ const serializeFieldSize = fieldType => 2;
 // 		// type, value, label
 // 		case messages.FieldType.Bool: {
 // 			const val = stream(TYPE_SIZE + 1)
-// 				.set(0, messages.FieldType.Bool)
-// 				.set(1, field.value)
+// 				.set8(0, messages.FieldType.Bool)
+// 				.set8(1, field.value)
 // 				.value();
 // 			return concatBuffer(val, strBuff(field.label));
 // 		}
@@ -68,8 +69,8 @@ export const serializeMessage = (msg) => {
 		// case messages.MessageType.BatchDeclare: {
 		// 	// type, length, ...messages
 		// 	const base = stream(TYPE_SIZE + LENGTH_SIZE)
-		// 		.set(0, messages.MessageType.BatchDeclare)
-		// 		.set(1, msg.messages.length)
+		// 		.set8(0, messages.MessageType.BatchDeclare)
+		// 		.set8(1, msg.messages.length)
 		// 		.value();
 		// 	console.debug(msg);
 		// 	return msg.messages.reduce((buff, x) =>
@@ -85,15 +86,53 @@ export const serializeMessage = (msg) => {
 		// Serialize as: [type, id, field]
 		// case messages.MessageType.DeclareField: {
 		// 	const base = stream(TYPE_SIZE + ID_SIZE)
-		// 		.set(0, messages.MessageType.DeclareField)
-		// 		.set(1, msg.id)
+		// 		.set8(0, messages.MessageType.DeclareField)
+		// 		.set8(1, msg.id)
 		// 		.value();
 		// 	const fieldBuff = serializeField(msg.field);
 		// 	return concatBuffer(base, fieldBuff);
 		// }
 
 		case messages.MessageType.FieldValue:
-			console.debug('@todo: Serialize FieldValue', msg);
+			const base = stream(1 + 1 + 1)
+				.set8(0, msg.type)
+				.set8(0, msg.fieldType)
+				.set8(1, msg.id)
+				.value();
+			switch (msg.fieldType) {
+				case messages.FieldType.Range: {
+					const fieldVal = stream(4)
+						.set32(0, msg.value)
+						.value();
+					return concatBuffer(base, fieldVal);
+				}
+				
+				case messages.FieldType.Color: {
+					const fieldVal = stream(3)
+						.set8(0, msg.value.r)
+						.set8(1, msg.value.g)
+						.set8(2, msg.value.b)
+						.value();
+					return concatBuffer(base, fieldVal);
+				}
+				
+				case messages.FieldType.Select: {
+					const fieldVal = stream(1)
+						.set8(0, msg.value)
+						.value();
+					return concatBuffer(base, fieldVal);
+				}
+
+				case messages.FieldType.Bool: {
+					const fieldVal = stream(1)
+						.set8(0, msg.value)
+						.value();
+					return concatBuffer(base, fieldVal);
+				}
+				
+				default:
+					console.debug('@todo: Serialize FieldValue', msg);
+			}
 			return new ArrayBuffer();
 
 		default:

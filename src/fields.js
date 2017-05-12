@@ -33,8 +33,8 @@ const parseVal = (fieldBase, val) => {
 }
 
 class FieldCtrl {
-	constructor(type, fieldBase) {
-		this.type = type;
+	constructor(fieldType, fieldBase) {
+		this.type = fieldType;
 		this.l = listener();
 		this.value = fieldBase.value;
 		this.fieldBase = fieldBase;
@@ -46,15 +46,15 @@ class FieldCtrl {
 			}
 		});
 
-		if (type !== FieldType.Bool) {
+		if (fieldType !== FieldType.Bool) {
 			fieldBase.input.addEventListener('change', x => {
 				this.value = parseVal(fieldBase, x.target.value);
-				this.l.emit({ type: 'change', value: this.value });
+				this.l.emit({ type: 'change', value: this.value, fieldType });
 			});
 		} else {
 			fieldBase.input.addEventListener('click', () => {
 				this.value = !this.value;
-				this.l.emit({ type: 'change', value: this.value });
+				this.l.emit({ type: 'change', value: this.value, fieldType });
 			});
 		}
 	}

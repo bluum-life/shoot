@@ -5,7 +5,7 @@
 // END MOCKS
 
 import * as sock from './socket';
-import { MessageType, batchDeclare, FieldType } from './messages';
+import { MessageType, batchDeclare, FieldType, fieldValue } from './messages';
 import { deserializeMessage, serializeMessage } from './serialize';
 import { bootstrap } from './doc';
 import { declareFirstPass } from './fixedFields';
@@ -37,7 +37,12 @@ class RootApi {
 			this.fields[id] = buildField(msg);
 			this.fieldsElt.appendChild(this.fields[id].field.elt);
 			this.fields[id].ctrl.listenInput(event => {
-				this.l.emit({ id, value: event.value });
+				this.l.emit({
+					id,
+					type: event.type,
+					value: event.value,
+					fieldType: event.fieldType,
+				});
 			});
 		}
 	}
@@ -89,13 +94,11 @@ bootstrap((doc) => {
 
 	// Register to api listener
 	api.l.map(evt => {
-		console.debug('!!! Root api listener', evt);
-		// ws.send(view.buffer);
 		switch (evt.type) {
 			case 'change':
-				console.debug(serializeMessage(
-					msg.fieldValue(evt.id, evt.value)
-				));
+				const out = serializeMessage(fieldValue(evt.fieldType, evt.id, evt.value));
+				console.debug('Bytes: ', new Uint8Array(out));
+				ws.send(out);
 				break;
 			default:
 				console.debug('Unhandled input: ', evt)
