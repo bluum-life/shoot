@@ -32,7 +32,7 @@ export const declareFirstPass = [
 	
 	// Colors
 	msg.declareField(2, msg.selectField('Color Mode', ['Pattern', 'Solid'], 1)),
-	msg.declareField(3, msg.selectField('Pattern', ['Rainbow'], 1)),
+	msg.declareField(3, msg.selectField('Pattern', ['Rainbow'], 0)),
 	msg.declareField(4, msg.colorField('Solid', 114, 0, 255)),
 	
 	// Effects

@@ -4,25 +4,57 @@ import { listener } from './util';
 const OFF_VAL = 'Turn On';
 const ON_VAL = 'Turn Off';
 
+const hex = num => {
+	const s = num.toString(16);
+	return s.length === 1 ? `0${s}` : s;
+}
+const colorToHex = msg =>  `#${hex(msg.r)}${hex(msg.g)}${hex(msg.b)}`;
+const hexToNum = val => {
+	const x = parseInt(val.replace(/\D/, ''), 16);
+	const r = (x >> 16) & 0xFF;
+	const g = (x >> 8) & 0xFF;
+	const b = x & 0xFF;
+	return { r, g, b };
+}
+
+const parseVal = (fieldBase, val) => {
+	switch (fieldBase.type) {
+		case FieldType.Range:
+			return Math.min(Math.max(fieldBase.src.min, +val), fieldBase.src.max);
+		case FieldType.Color:
+			return hexToNum(val);
+		case FieldType.Select:
+			return fieldBase.src.options.indexOf(val);
+		case FieldType.Bool:
+			return !!val;
+		default:
+			console.error(fieldBase, val);
+	}
+}
+
 class FieldCtrl {
 	constructor(type, fieldBase) {
 		this.type = type;
 		this.l = listener();
 		this.value = fieldBase.value;
+		this.fieldBase = fieldBase;
+
+		this.l.map(x => {
+			switch (x.type) {
+				case 'change':
+					return this.onChange(x)
+			}
+		});
 
 		if (type !== FieldType.Bool) {
-			fieldBase.input.addEventListener('change', x =>
-				this.l.emit({
-					type: 'change',
-					value: x.target.value
-				})
-			);
+			fieldBase.input.addEventListener('change', x => {
+				this.value = parseVal(fieldBase, x.target.value);
+				this.l.emit({ type: 'change', value: this.value });
+			});
 		} else {
 			fieldBase.input.addEventListener('click', () => {
-				this.l.emit({
-					type: 'change',
-					value: !this.value
-				});
+				this.value = !this.value;
+				this.l.emit({ type: 'change', value: this.value });
 			});
 		}
 	}
@@ -32,23 +64,32 @@ class FieldCtrl {
 	}
 	
 	onChange(changes) {
-		console.debug('Changes: ', changes);
+		this.value = changes.value;
+		switch (this.type) {
+			case FieldType.Select:
+				this.fieldBase.input.selectedIndex = this.value;
+				break;
+			case FieldType.Color:
+				this.fieldBase.input.value = colorToHex(this.value);
+				break;
+			case FieldType.Range:
+				this.fieldBase.input.value = this.value;
+				break;
+			case FieldType.Bool:
+				this.fieldBase.input.textContent = this.value ? ON_VAL : OFF_VAL;
+				break;
+		}
 	}
 }
 
 
-const hex = num => {
-	const s = num.toString(16);
-	return s.length === 1 ? `0${s}` : s;
-}
-const colorToHex = msg =>  `#${hex(msg.r)}${hex(msg.g)}${hex(msg.b)}`;
 const base = (msg) => {
 	const elt = document.createElement('div');
 	elt.classList.add('field');
 	const label = document.createElement('label');
 	label.textContent = msg.label;
 	elt.appendChild(label);
-	return { elt, label, type: msg.type };
+	return { elt, label, type: msg.type, src: msg };
 }
 
 const newInput = (msg) => {
@@ -75,7 +116,6 @@ const newColorField = (msg) => {
 	b.value = { r: msg.r, g: msg.g, b: msg.b };
 	b.input.setAttribute('type', 'color');
 	b.input.setAttribute('value', colorToHex(b.value));
-	
 	return b;
 };
 
@@ -126,7 +166,6 @@ export const getField = (msg) => {
 };
 
 export const buildField = (msg) => {
-	console.debug('Field: ', msg);
 	const field = getField(msg);
 	
 	const ctrl = new FieldCtrl(msg.type, field);

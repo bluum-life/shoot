@@ -6,7 +6,7 @@
 
 import * as sock from './socket';
 import { MessageType, batchDeclare, FieldType } from './messages';
-import { deserializeMessage } from './serialize';
+import { deserializeMessage, serializeMessage } from './serialize';
 import { bootstrap } from './doc';
 import { declareFirstPass } from './fixedFields';
 
@@ -43,7 +43,6 @@ class RootApi {
 	}
 }
 
-
 /**
  * Consume and route a message from the board
  * @param {Message} msg
@@ -64,7 +63,6 @@ const newRouter = api => msg => {
 
 // Code to run once the document is bootstrapped
 bootstrap((doc) => {
-	// console.info('LOADED', doc.body);
 	
 	// Init DOM
 	doc.querySelector('.loading-display').remove();
@@ -76,7 +74,7 @@ bootstrap((doc) => {
 	// Create the WS connection -- for now, assume same as host
 	const ws = sock.connect(location.hostname);
 	ws.onmessage = (evt) => {
-		// console.info('WS event: ', evt);
+		console.info('WS event: ', evt);
 		try {
 			const data = deserializeMessage(evt.data);
 			router(data);
@@ -89,18 +87,19 @@ bootstrap((doc) => {
 		console.error('Sock error: ', error);
 	}
 
-	// @todo: hacking api buffer
-	const view = new DataView(new ArrayBuffer(6*8)); // 6 bytes (?)
-	view.setUint8(0, 10);
-	view.setUint8(1, 20);
-	view.setFloat32(2, Math.PI); // 32/8 = 4 bytes, 4 + 2 = 6, we're full
-
-	// Register to api listener l
+	// Register to api listener
 	api.l.map(evt => {
 		console.debug('!!! Root api listener', evt);
-		// ws.send(JSON.stringify(evt));
-		// // @todo: womp womp
 		// ws.send(view.buffer);
+		switch (evt.type) {
+			case 'change':
+				console.debug(serializeMessage(
+					msg.fieldValue(evt.id, evt.value)
+				));
+				break;
+			default:
+				console.debug('Unhandled input: ', evt)
+		}
 	});
 	
 	// Fire off the first pass to the router

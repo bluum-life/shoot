@@ -28,34 +28,34 @@ const serializeFieldSize = fieldType => 2;
  * @param {Field} field
  * @returns {ArrayBuffer} 
  */
-export const serializeField = (field) => {
-	switch (field.type) {
-		case messages.FieldType.Range:
-			console.debug('@todo: serialize range', field);
-			return new ArrayBuffer(0);
+// export const serializeField = (field) => {
+// 	switch (field.type) {
+// 		case messages.FieldType.Range:
+// 			console.debug('@todo: serialize range', field);
+// 			return new ArrayBuffer(0);
 		
-		case messages.FieldType.Color:
-			console.debug('@todo: serialize color', field);
-			return new ArrayBuffer(0);
+// 		case messages.FieldType.Color:
+// 			console.debug('@todo: serialize color', field);
+// 			return new ArrayBuffer(0);
 		
-		case messages.FieldType.Select:
-			console.debug('@todo: serialize select', field);
-			return new ArrayBuffer(0);
+// 		case messages.FieldType.Select:
+// 			console.debug('@todo: serialize select', field);
+// 			return new ArrayBuffer(0);
 		
-		// type, value, label
-		case messages.FieldType.Bool: {
-			const val = stream(TYPE_SIZE + 1)
-				.set(0, messages.FieldType.Bool)
-				.set(1, field.value)
-				.value();
-			return concatBuffer(val, strBuff(field.label));
-		}
+// 		// type, value, label
+// 		case messages.FieldType.Bool: {
+// 			const val = stream(TYPE_SIZE + 1)
+// 				.set(0, messages.FieldType.Bool)
+// 				.set(1, field.value)
+// 				.value();
+// 			return concatBuffer(val, strBuff(field.label));
+// 		}
 
-		default:
-			console.debug(field);
-			throw new Error('Unknown field type.');
-	}
-}
+// 		default:
+// 			console.debug(field);
+// 			throw new Error('Unknown field type.');
+// 	}
+// }
 
 /**
  * Serialize a message to send to the server
@@ -65,32 +65,32 @@ export const serializeField = (field) => {
 export const serializeMessage = (msg) => {
 	// @todo: send a message to the server
 	switch (msg.type) {
-		case messages.MessageType.BatchDeclare: {
-			// type, length, ...messages
-			const base = stream(TYPE_SIZE + LENGTH_SIZE)
-				.set(0, messages.MessageType.BatchDeclare)
-				.set(1, msg.messages.length)
-				.value();
-			console.debug(msg);
-			return msg.messages.reduce((buff, x) =>
-				concatBuffer(buff, serializeMessage(x)),
-				base
-			);
-		}
+		// case messages.MessageType.BatchDeclare: {
+		// 	// type, length, ...messages
+		// 	const base = stream(TYPE_SIZE + LENGTH_SIZE)
+		// 		.set(0, messages.MessageType.BatchDeclare)
+		// 		.set(1, msg.messages.length)
+		// 		.value();
+		// 	console.debug(msg);
+		// 	return msg.messages.reduce((buff, x) =>
+		// 		concatBuffer(buff, serializeMessage(x)),
+		// 		base
+		// 	);
+		// }
 
-		case messages.MessageType.Status:
-			console.debug('@todo: Serialize Status', msg);
-			return new ArrayBuffer();
+		// case messages.MessageType.Status:
+		// 	console.debug('@todo: Serialize Status', msg);
+		// 	return new ArrayBuffer();
 
 		// Serialize as: [type, id, field]
-		case messages.MessageType.DeclareField: {
-			const base = stream(TYPE_SIZE + ID_SIZE)
-				.set(0, messages.MessageType.DeclareField)
-				.set(1, msg.id)
-				.value();
-			const fieldBuff = serializeField(msg.field);
-			return concatBuffer(base, fieldBuff);
-		}
+		// case messages.MessageType.DeclareField: {
+		// 	const base = stream(TYPE_SIZE + ID_SIZE)
+		// 		.set(0, messages.MessageType.DeclareField)
+		// 		.set(1, msg.id)
+		// 		.value();
+		// 	const fieldBuff = serializeField(msg.field);
+		// 	return concatBuffer(base, fieldBuff);
+		// }
 
 		case messages.MessageType.FieldValue:
 			console.debug('@todo: Serialize FieldValue', msg);
