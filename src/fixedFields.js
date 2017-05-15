@@ -25,7 +25,7 @@ import * as msg from './messages';
  */
 
 // Declare the fields @todo: sync this with root
-export const declareFirstPass = [
+export const v0fields = [
 	// Settings
 	msg.declareField(0, msg.boolField('Power', true)),
 	msg.declareField(1, msg.rangeField('Brightness', 1, 255, 255)),

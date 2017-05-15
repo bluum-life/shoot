@@ -20,43 +20,73 @@ const stream = length => {
 	return out;
 }
 
-const serializeFieldSize = fieldType => 2;
-
-// I didn't use protobuf because js libs are >20k :/
+/**
+ * FieldValue header format.
+ * @size 3
+ * @uint8 msgType: MessageType
+ * @uint8 fieldType: FieldType
+ * @uint8 fieldId: Number
+ */
+export const fieldValueHeader = (msg) => stream(3)
+	.set8(0, msg.type)
+	.set8(1, msg.fieldType)
+	.set8(2, msg.id)
+	.value();
 
 /**
- * Serialize a field into bytes for transport
- * @param {Field} field
- * @returns {ArrayBuffer} 
+ * Based on field type, serializes value.
+ * @param {Message<FieldValue>}
  */
-// export const serializeField = (field) => {
-// 	switch (field.type) {
-// 		case messages.FieldType.Range:
-// 			console.debug('@todo: serialize range', field);
-// 			return new ArrayBuffer(0);
+export const fieldValueBody = (msg) => {
+	switch (msg.fieldType) {
 		
-// 		case messages.FieldType.Color:
-// 			console.debug('@todo: serialize color', field);
-// 			return new ArrayBuffer(0);
+		/**
+		 * @size 4
+		 * @uint32 value: Number
+		 */
+		case messages.FieldType.Range:
+			return stream(4)
+				.set32(0, msg.value)
+				.value();
 		
-// 		case messages.FieldType.Select:
-// 			console.debug('@todo: serialize select', field);
-// 			return new ArrayBuffer(0);
-		
-// 		// type, value, label
-// 		case messages.FieldType.Bool: {
-// 			const val = stream(TYPE_SIZE + 1)
-// 				.set8(0, messages.FieldType.Bool)
-// 				.set8(1, field.value)
-// 				.value();
-// 			return concatBuffer(val, strBuff(field.label));
-// 		}
+		/**
+		 * @size 3
+		 * @uint8 red: Number
+		 * @uint8 green: Number
+		 * @uint8 blue: Number
+		 */
+		case messages.FieldType.Color:
+			return stream(3)
+				.set8(0, msg.value.r)
+				.set8(1, msg.value.g)
+				.set8(2, msg.value.b)
+				.value();
 
-// 		default:
-// 			console.debug(field);
-// 			throw new Error('Unknown field type.');
-// 	}
-// }
+		/**
+		 * @size 1
+		 * @uint8 selectedIndex: Number
+		 */
+		case messages.FieldType.Select:
+			return stream(1)
+				.set8(0, msg.value)
+				.value();
+		
+		/**
+		 * @size 1
+		 * @uint8 value: Boolean
+		 */
+		case messages.FieldType.Bool:
+			return stream(1)
+				.set8(0, msg.value)
+				.value();
+
+		default:
+			console.debug('@todo: Serialize FieldValue', msg);
+			return new ArrayBuffer();
+	}
+}
+
+
 
 /**
  * Serialize a message to send to the server
@@ -94,46 +124,10 @@ export const serializeMessage = (msg) => {
 		// }
 
 		case messages.MessageType.FieldValue:
-			const base = stream(1 + 1 + 1)
-				.set8(0, msg.type)
-				.set8(0, msg.fieldType)
-				.set8(1, msg.id)
-				.value();
-			switch (msg.fieldType) {
-				case messages.FieldType.Range: {
-					const fieldVal = stream(4)
-						.set32(0, msg.value)
-						.value();
-					return concatBuffer(base, fieldVal);
-				}
-				
-				case messages.FieldType.Color: {
-					const fieldVal = stream(3)
-						.set8(0, msg.value.r)
-						.set8(1, msg.value.g)
-						.set8(2, msg.value.b)
-						.value();
-					return concatBuffer(base, fieldVal);
-				}
-				
-				case messages.FieldType.Select: {
-					const fieldVal = stream(1)
-						.set8(0, msg.value)
-						.value();
-					return concatBuffer(base, fieldVal);
-				}
-
-				case messages.FieldType.Bool: {
-					const fieldVal = stream(1)
-						.set8(0, msg.value)
-						.value();
-					return concatBuffer(base, fieldVal);
-				}
-				
-				default:
-					console.debug('@todo: Serialize FieldValue', msg);
-			}
-			return new ArrayBuffer();
+			return concatBuffer(
+				fieldValueHeader(msg),
+				fieldValueBody(msg)
+			);
 
 		default:
 			console.debug(msg);

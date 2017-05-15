@@ -8,7 +8,8 @@ import * as sock from './socket';
 import { MessageType, batchDeclare, FieldType, fieldValue } from './messages';
 import { deserializeMessage, serializeMessage } from './serialize';
 import { bootstrap } from './doc';
-import { declareFirstPass } from './fixedFields';
+import { v0fields } from './fixedFields';
+
 
 // API
 import { buildField } from './fields';
@@ -47,6 +48,7 @@ class RootApi {
 		}
 	}
 }
+
 
 /**
  * Consume and route a message from the board
@@ -105,10 +107,6 @@ bootstrap((doc) => {
 		}
 	});
 	
-	// Fire off the first pass to the router
-	declareFirstPass.map(router);
-
-	///////// @todo: remove mock kickoff
-	// mocks.firstTest();
-	// mocks.rootServer.broadcast(declareFirstPass);
+	// Register v0 fields @todo: better versioning of messages/app.
+	v0fields.map(router);
 });
