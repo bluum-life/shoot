@@ -24,6 +24,22 @@ import * as msg from './messages';
  * Brightness:::: Number, 0 -> 255
  */
 
+const patterns = [
+	// Custom gradients
+	'FairyLights',
+	'PinkSplash',
+	'OceanBreeze',
+	// Pre-defined few
+	'Clouds',
+	'Lava',
+	'Ocean',
+	'Forest',
+	'Rainbow',
+	'RainbowStripe',
+	'Party',
+	'Heat'
+];
+
 // Declare the fields @todo: sync this with root
 export const v0fields = [
 	// Settings
@@ -32,11 +48,11 @@ export const v0fields = [
 	
 	// Colors
 	msg.declareField(2, msg.selectField('Color Mode', ['Pattern', 'Solid'], 1)),
-	msg.declareField(3, msg.selectField('Pattern', ['Rainbow'], 0)),
+	msg.declareField(3, msg.selectField('Pattern', patterns, 0)),
 	msg.declareField(4, msg.colorField('Solid', 114, 0, 255)),
-	
+
 	// Effects
-	msg.declareField(5, msg.selectField('Static Effect', ['None', 'Cycle', 'Fader'], 1)),
+	msg.declareField(5, msg.selectField('Static Effect', ['None', 'Pride', 'Twinkle', 'Beat', 'Juggle', 'Confetti'], 1)),
 	msg.declareField(6, msg.boolField('Sparkles', false)),
 	msg.declareField(7, msg.boolField('Pop-fade', false)),
 	msg.declareField(8, msg.boolField('Runner', false)),
